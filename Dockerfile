@@ -24,6 +24,10 @@ COPY . .
 # Build the application
 RUN cargo build --target x86_64-unknown-linux-musl --release
 
+# (Optional) Remove debug symbols
+ENV SO_FILE=target/x86_64-unknown-linux-musl/release/lib$CRATE_NAME.so
+RUN strip $SO_FILE
+
 # Use a slim image for running the application
 FROM alpine as runtime
 
@@ -37,4 +41,5 @@ COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/*.so $OUTLIB
 
 ENV OUTLIB=$OUTLIB
 # nm displays the symbols in the library
-CMD echo "Running 'nm $OUTLIB':" && nm $OUTLIB
+# CMD echo "Running 'nm -D $OUTLIB':" && nm -D $OUTLIB
+CMD echo "Running `nm -D $OUTLIB | grep 'hello'`:" && nm -D $OUTLIB | grep 'hello'
