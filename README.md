@@ -3,5 +3,5 @@
 ## One-liner for testing
 
 ```console
-build -t pew . && docker run --rm pew & docker rmi pew
+docker build -t pew . && docker run --rm pew & docker rmi pew
 ```
